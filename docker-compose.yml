@@ -1,0 +1,20 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: flask run --host=0.0.0.0
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=core/server.py  # Define the Flask app location
+    volumes:
+      - .:/app
+
+  test:
+    build: .
+    command: sh -c "rm -f core/store.sqlite3 && flask db upgrade -d core/migrations/ && pytest --cov --cov-report=html"
+    environment:
+      - FLASK_APP=core/server.py  # Define the Flask app location for tests
+    volumes:
+      - .:/app
+      - ./htmlcov:/app/htmlcov  # Map the htmlcov folder to the host
